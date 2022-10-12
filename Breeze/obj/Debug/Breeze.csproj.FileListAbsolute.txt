@@ -1,8 +1,6 @@
 C:\development\breeze-ide\Breeze\bin\Debug\Breeze.exe.config
 C:\development\breeze-ide\Breeze\bin\Debug\Breeze.exe
 C:\development\breeze-ide\Breeze\bin\Debug\Breeze.pdb
-C:\development\breeze-ide\Breeze\bin\Debug\Bunifu.UI.WinForms.xml
-C:\development\breeze-ide\Breeze\bin\Debug\Bunifu.UI.WinForms.1.5.3.xml
 C:\development\breeze-ide\Breeze\bin\Debug\Microsoft.Win32.Registry.xml
 C:\development\breeze-ide\Breeze\bin\Debug\Microsoft.Win32.Registry.AccessControl.xml
 C:\development\breeze-ide\Breeze\bin\Debug\Microsoft.Win32.SystemEvents.xml

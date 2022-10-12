@@ -18,19 +18,18 @@ namespace Breeze
 						InitializeComponent();
 				}
 
+				#region Title bar
 				Point cursorInitialPoint = Point.Empty;
 				bool canDrag = false;
 
+				//Titlebar main behaviour
 				private void TitleBar_MouseDown(object sender, MouseEventArgs e)
 				{
 						canDrag = true;
 						cursorInitialPoint = e.Location;
 				}
 
-				private void TitleBar_MouseUp(object sender, MouseEventArgs e)
-				{
-						canDrag = false;
-				}
+				private void TitleBar_MouseUp(object sender, MouseEventArgs e) => canDrag = false;
 
 				private void TitleBar_MouseMove(object sender, MouseEventArgs e)
 				{
@@ -52,6 +51,28 @@ namespace Breeze
 						);
 
 						this.Location = newFormLocation;
+				}
+
+				//Form exit, expand, minimise buttons
+				private Color titleDefaultColor = Color.FromArgb(255, 28, 37, 65);
+				private Color titleHoverColor = Color.Red;
+
+				private void exitButton_MouseDown(object sender, MouseEventArgs e) => this.Close();
+
+				private void exitButton_MouseEnter(object sender, System.EventArgs e)
+				{
+						this.exitButton.BackColor = titleHoverColor;
+				}
+
+				private void exitButton_MouseLeave(object sender, System.EventArgs e)
+				{
+						this.exitButton.BackColor = titleDefaultColor;
+				}
+				#endregion
+
+				private void Breeze_Load(object sender, EventArgs e)
+				{
+
 				}
 		}
 }
