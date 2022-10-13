@@ -16,9 +16,54 @@ namespace Breeze
 {
 	public partial class Breeze : Form
 	{
-		public Breeze() {
-				InitializeComponent();
+		public Breeze()
+		{
+			InitializeComponent();
+
+			this.DoubleBuffered = true;
+			this.FormBorderStyle = FormBorderStyle.None;
+			this.SetStyle(ControlStyles.ResizeRedraw, true);
 		}
+
+		#region Resizable Form
+		private const int gripSize = 12;
+
+		protected override void WndProc(ref Message m)
+		{
+			if (m.Msg == 0x84)
+			{
+				Point cursorPoint = new Point(m.LParam.ToInt32());
+				cursorPoint = this.PointToClient(cursorPoint);
+				//Pointer bottom resizeable
+				if (cursorPoint.Y >= this.ClientSize.Height - gripSize && cursorPoint.X <= this.ClientSize.Width - gripSize)
+				{
+					m.Result = (IntPtr)15;
+					return;
+				}
+				//Pointer right resizable
+				if (cursorPoint.X >= this.ClientSize.Width - gripSize && cursorPoint.Y <= this.ClientSize.Height - gripSize)
+				{
+					m.Result = (IntPtr)11;
+					return;
+				}
+
+				//Pointer resize bottom right corner
+				if (cursorPoint.X >= this.ClientSize.Width - gripSize && cursorPoint.Y >= this.ClientSize.Height - gripSize)
+				{
+					m.Result = (IntPtr)17;
+					return;
+				}
+
+				//Standard pointer behaviour
+				if (cursorPoint.Y <= this.ClientSize.Height - gripSize)
+				{
+					m.Result = (IntPtr)1;
+					return;
+				}
+			}
+			base.WndProc(ref m);
+		}
+		#endregion
 
 		#region Title bar
 		Point cursorInitialPoint = Point.Empty;
@@ -55,7 +100,7 @@ namespace Breeze
 			this.Location = newFormLocation;
 		}
 
-		//EXIT
+		#region EXIT BUTTON
 		private Color titleDefaultColor = Color.FromArgb(255, 28, 37, 65);
 		private Color titleHoverColor = Color.Red;
 
@@ -70,11 +115,12 @@ namespace Breeze
 		{
 			this.exitButton.BackColor = titleDefaultColor;
 		}
+		#endregion
 
 		private Color expandMinimiseDefaultColor = Color.FromArgb(255, 28, 37, 65);
 		private Color expandMinimiseHoverColor = Color.FromArgb(255, 48, 57, 85);
-				
-		//EXPAND
+
+		#region EXPAND BUTTON
 		private Vector2 unexpandedFormSize = Vector2.Zero;
 		private bool isExpanded = false;
 
@@ -109,8 +155,9 @@ namespace Breeze
 		{
 			this.expandButton.BackColor = expandMinimiseDefaultColor;
 		}
+		#endregion
 
-		//MINIMISE
+		#region MINIMISE BUTTON
 		private void MinimiseButton_MouseDown(object sender, MouseEventArgs e)
 		{
 			this.WindowState = FormWindowState.Minimized;
@@ -125,11 +172,22 @@ namespace Breeze
 		{
 			this.minimiseButton.BackColor = expandMinimiseDefaultColor;
 		}
-			#endregion
+		#endregion
+		#endregion
 
 		private void Breeze_Load(object sender, EventArgs e)
 		{
-			this.FormBorderStyle = FormBorderStyle.None;
+			
+		}
+
+		private void minimiseButton_Paint(object sender, PaintEventArgs e)
+		{
+
+		}
+
+		private void exitButton_Paint(object sender, PaintEventArgs e)
+		{
+
 		}
 	}
 }
