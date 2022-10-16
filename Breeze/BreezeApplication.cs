@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Reflection;
@@ -13,7 +14,9 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Serialization;
+using static System.Net.WebRequestMethods;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using ListView = System.Windows.Forms.ListView;
 
 namespace Breeze
 {
@@ -22,19 +25,17 @@ namespace Breeze
 		public Breeze()
 		{
 			InitializeComponent();
-
-			this.DoubleBuffered = true;
-			this.FormBorderStyle = FormBorderStyle.None;
 			this.SetStyle(ControlStyles.ResizeRedraw, true);
 
-			initialCharacterColour = Color.FromArgb(235, 235, 235);
-
 			ChangeTabsWidth(2);
+			PopulateTreeView("C:\\development");
+
+			//Focus on our editor box on start
+			this.ActiveControl = mainEditorBox;
 		}
 
 		#region Resizable Form
 		private const int gripSize = 12;
-
 		protected override void WndProc(ref Message m)
 		{
 			if (m.Msg == 0x84)
@@ -200,13 +201,19 @@ namespace Breeze
 		#endregion
 
 		#region Syntax Highlighting
-		Color initialCharacterColour = new Color();
+		Color initialCharacterColour = Color.FromArgb(235, 235, 235);
 
 		//Expression patterns
-		string keywords = @"\b(public|private|partial|static|void|class|namespace|interface|enum|using|foreach|in|if|else|do|while)\b";
-		string variables = @"\b(var|const|int|string|long|bool|float|char|this)\b";
+		string keywords = @"\b(public|private|partial|static|void|class|namespace|interface|enum|using|foreach|in|if|else|do|while|internal|get|set|return)\b";
+
+		string variables = @"\b(var|const|int|string|long|bool|float|char|this|null|false|true|value|new)\b";
+
+		string referenceTypes = @"\b(Dictionary|List|Vector2|Vector3|StringBuilder|Vector2Int|GameObject|Bounds)\b";
+
 		string comments = @"(/\*[^*]*\*+(?:[^/*][^*]*\*+)*/|\/\/.+?$)";
+
 		string types = @"\b(Console)\b";
+
 		string strings = "\".+?\"";
 
 		private void MainEditorBox_TextChanged(object sender, EventArgs e)
@@ -216,6 +223,7 @@ namespace Breeze
 			//Character collections
 			MatchCollection keywordMatches = Regex.Matches(mainEditorBox.Text, keywords);
 			MatchCollection variableMatches = Regex.Matches(mainEditorBox.Text, variables);
+			MatchCollection referenceTypesMatches = Regex.Matches(mainEditorBox.Text, referenceTypes);
 			MatchCollection stringsMatches = Regex.Matches(mainEditorBox.Text, strings);
 			MatchCollection commentMatches = Regex.Matches(mainEditorBox.Text, comments, RegexOptions.Multiline);
 			MatchCollection typeMatches = Regex.Matches(mainEditorBox.Text, types);
@@ -239,6 +247,12 @@ namespace Breeze
 			}
 
 			foreach (Match match in variableMatches) {
+				mainEditorBox.SelectionStart = match.Index;
+				mainEditorBox.SelectionLength = match.Length;
+				mainEditorBox.SelectionColor = Color.LightCoral;
+			}
+
+			foreach (Match match in referenceTypesMatches) {
 				mainEditorBox.SelectionStart = match.Index;
 				mainEditorBox.SelectionLength = match.Length;
 				mainEditorBox.SelectionColor = Color.LightCoral;
@@ -320,38 +334,155 @@ namespace Breeze
 
 			int displayedTopline = mainEditorBox.GetLineFromCharIndex(topCharIndex);
 
-			//UpdateLineLength(); //incase line char index is -1
-
-			Console.WriteLine(displayedTopline);
-
 			lineNumberBox.SelectionStart = lineNumberBox.GetFirstCharIndexFromLine(displayedTopline);
 			lineNumberBox.ScrollToCaret();
 		}
 		#endregion
 
 		#region Tabs settings
-		public void ChangeTabsWidth(int newWidth)
+		public void ChangeTabsWidth(int tabSpacing)
 		{
-			switch (newWidth)
+			int[] selectionWidths = new int[30];
+			int currentSelectionTabWidth = 0;
+
+			for (int i = 0; i < 30; i++)
 			{
-				case 1:
-					mainEditorBox.SelectionTabs = new int[] { 20 };
-					break;
-				case 2:
-					mainEditorBox.SelectionTabs = new int[] { 20, 40 };
-					break;
-				case 3:
-					mainEditorBox.SelectionTabs = new int[] { 20, 40, 60 };
-					break;
-				case 4:
-					mainEditorBox.SelectionTabs = new int[] { 20, 40, 60, 80 };
-					break;
-				default:
-					Console.WriteLine("Error, tabs width not supported. Setting tab size to 2");
-					mainEditorBox.SelectionTabs = new int[] { 20 };
-					break;
+				currentSelectionTabWidth += (10 * tabSpacing);
+				selectionWidths[i] = currentSelectionTabWidth;
+			}
+
+			mainEditorBox.SelectionTabs = selectionWidths;
+		}
+		#endregion
+
+		#region Tree/list views
+		private void PopulateTreeView(string directory)
+		{
+			TreeNode rootNode;
+
+			DirectoryInfo info = new DirectoryInfo(directory);
+			if (info.Exists)
+			{
+				rootNode = new TreeNode(info.Name);
+				rootNode.Tag = info;
+				GetDirectories(info.GetDirectories(), rootNode);
+				treeView.Nodes.Add(rootNode);
 			}
 		}
+
+		private void GetDirectories(DirectoryInfo[] subDirs,
+				TreeNode nodeToAddTo)
+		{
+			TreeNode aNode;
+			DirectoryInfo[] subSubDirs;
+			foreach (DirectoryInfo subDir in subDirs)
+			{
+				aNode = new TreeNode(subDir.Name, 0, 0);
+				aNode.Tag = subDir;
+				aNode.ImageKey = "folder";
+
+				//Exception handling
+				try
+				{
+					subSubDirs = subDir.GetDirectories();
+				}
+				catch (UnauthorizedAccessException ex)
+				{
+					continue;
+				}
+				catch (DirectoryNotFoundException ex)
+				{
+					continue;
+				}
+				
+				if (subSubDirs.Length != 0)
+				{
+					GetDirectories(subSubDirs, aNode);
+				}
+				nodeToAddTo.Nodes.Add(aNode);
+			}
+		}
+
+		//Click on treeview behaviour
+		private void TreeView_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
+		{
+			TreeNode newSelected = e.Node;
+
+			listView.Items.Clear();
+
+			DirectoryInfo nodeDirInfo = (DirectoryInfo)newSelected.Tag;
+
+			ListViewItem.ListViewSubItem[] subItems;
+			ListViewItem item = null;
+
+			//Populate directories
+			foreach (DirectoryInfo dir in nodeDirInfo.GetDirectories())
+			{
+				item = new ListViewItem(dir.Name, 0);
+				item.Name = dir.FullName;
+				item.Tag = "folder";
+
+				subItems = new ListViewItem.ListViewSubItem[] {
+					new ListViewItem.ListViewSubItem(item, "Directory"),
+					new ListViewItem.ListViewSubItem(item,
+					dir.LastAccessTime.ToShortDateString())
+				};
+
+				item.SubItems.AddRange(subItems);
+			}
+
+			//Populate files
+			foreach (FileInfo file in nodeDirInfo.GetFiles())
+			{
+				item = new ListViewItem(file.Name, 1);
+				item.Name = file.FullName;
+				item.Tag = "file";
+
+				subItems = new ListViewItem.ListViewSubItem[] {
+					new ListViewItem.ListViewSubItem(item, "File"),
+					new ListViewItem.ListViewSubItem(item,
+					file.LastAccessTime.ToShortDateString())
+				};
+
+				item.SubItems.AddRange(subItems);
+				listView.Items.Add(item);
+			}
+		}
+		#endregion
+
+		#region Read to textbox/Save to file
+		private ListViewItem currentlyActiveFile;
+		private void ListView_ItemChosen(object sender, EventArgs e)
+		{
+			currentlyActiveFile = GetItemFromPoint(listView, Cursor.Position);
+
+			string itemPath = Path.GetFullPath(currentlyActiveFile.Name).ToString();
+
+			mainEditorBox.Text = System.IO.File.ReadAllText(itemPath);
+		}
+
+		private ListViewItem GetItemFromPoint(ListView listView, Point mousePosition)
+		{
+			Point localPoint = listView.PointToClient(mousePosition);
+			return listView.GetItemAt(localPoint.X, localPoint.Y);
+		}
+
+		//Ctrl+S shortcut
+		protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+		{
+			if (keyData == (Keys.Control | Keys.S))
+			{
+				if (currentlyActiveFile == null) return true;
+
+				mainEditorBox.SaveFile(currentlyActiveFile.Name, RichTextBoxStreamType.PlainText);
+
+				MessageBox.Show("Your file was saved.");
+				return true;
+			}
+			return base.ProcessCmdKey(ref msg, keyData);
+		}
+
+		//Add a file->save
 		#endregion
 	}
 }   

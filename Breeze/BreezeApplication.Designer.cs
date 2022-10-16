@@ -23,24 +23,36 @@
 			#region Windows Form Designer generated code
 			private void InitializeComponent()
 			{
+			this.components = new System.ComponentModel.Container();
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Breeze));
 			this.TitleBar = new System.Windows.Forms.Panel();
 			this.titleLabel = new System.Windows.Forms.Label();
 			this.minimiseButton = new System.Windows.Forms.Panel();
 			this.expandButton = new System.Windows.Forms.Panel();
 			this.exitButton = new System.Windows.Forms.Panel();
 			this.pictureBox1 = new System.Windows.Forms.PictureBox();
-			this.treeView1 = new System.Windows.Forms.TreeView();
+			this.treeView = new System.Windows.Forms.TreeView();
+			this.imageList = new System.Windows.Forms.ImageList(this.components);
 			this.mainEditorBox = new System.Windows.Forms.RichTextBox();
 			this.editorBoxFocusLabel = new System.Windows.Forms.Label();
 			this.splitContainer = new System.Windows.Forms.SplitContainer();
 			this.numberLineLable = new System.Windows.Forms.Label();
 			this.lineNumberBox = new System.Windows.Forms.RichTextBox();
+			this.documentTreeSplitter = new System.Windows.Forms.SplitContainer();
+			this.listView = new System.Windows.Forms.ListView();
+			this.name = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.type = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
 			this.TitleBar.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
 			this.splitContainer.Panel1.SuspendLayout();
 			this.splitContainer.Panel2.SuspendLayout();
 			this.splitContainer.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.documentTreeSplitter)).BeginInit();
+			this.documentTreeSplitter.Panel1.SuspendLayout();
+			this.documentTreeSplitter.Panel2.SuspendLayout();
+			this.documentTreeSplitter.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// TitleBar
@@ -128,16 +140,32 @@
 			this.pictureBox1.TabIndex = 2;
 			this.pictureBox1.TabStop = false;
 			// 
-			// treeView1
+			// treeView
 			// 
-			this.treeView1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-			this.treeView1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(6)))), ((int)(((byte)(13)))), ((int)(((byte)(33)))));
-			this.treeView1.BorderStyle = System.Windows.Forms.BorderStyle.None;
-			this.treeView1.Location = new System.Drawing.Point(0, 35);
-			this.treeView1.Name = "treeView1";
-			this.treeView1.Size = new System.Drawing.Size(182, 589);
-			this.treeView1.TabIndex = 2;
+			this.treeView.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(6)))), ((int)(((byte)(13)))), ((int)(((byte)(33)))));
+			this.treeView.BorderStyle = System.Windows.Forms.BorderStyle.None;
+			this.treeView.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.treeView.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.treeView.ForeColor = System.Drawing.Color.Gainsboro;
+			this.treeView.ImageIndex = 0;
+			this.treeView.ImageList = this.imageList;
+			this.treeView.Indent = 8;
+			this.treeView.ItemHeight = 16;
+			this.treeView.LineColor = System.Drawing.Color.White;
+			this.treeView.Location = new System.Drawing.Point(0, 0);
+			this.treeView.Name = "treeView";
+			this.treeView.SelectedImageIndex = 0;
+			this.treeView.Size = new System.Drawing.Size(209, 100);
+			this.treeView.StateImageList = this.imageList;
+			this.treeView.TabIndex = 2;
+			this.treeView.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.TreeView_NodeMouseClick);
+			// 
+			// imageList
+			// 
+			this.imageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList.ImageStream")));
+			this.imageList.TransparentColor = System.Drawing.Color.Transparent;
+			this.imageList.Images.SetKeyName(0, "folderIcon.png");
+			this.imageList.Images.SetKeyName(1, "docIcon.png");
 			// 
 			// mainEditorBox
 			// 
@@ -149,9 +177,9 @@
 			this.mainEditorBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			this.mainEditorBox.Font = new System.Drawing.Font("Cascadia Code", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.mainEditorBox.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(235)))), ((int)(((byte)(235)))), ((int)(((byte)(235)))));
-			this.mainEditorBox.Location = new System.Drawing.Point(2, 0);
+			this.mainEditorBox.Location = new System.Drawing.Point(-1, -1);
 			this.mainEditorBox.Name = "mainEditorBox";
-			this.mainEditorBox.Size = new System.Drawing.Size(755, 574);
+			this.mainEditorBox.Size = new System.Drawing.Size(743, 574);
 			this.mainEditorBox.TabIndex = 3;
 			this.mainEditorBox.Text = "";
 			this.mainEditorBox.WordWrap = false;
@@ -161,7 +189,7 @@
 			// editorBoxFocusLabel
 			// 
 			this.editorBoxFocusLabel.AutoSize = true;
-			this.editorBoxFocusLabel.Location = new System.Drawing.Point(185, 587);
+			this.editorBoxFocusLabel.Location = new System.Drawing.Point(192, 581);
 			this.editorBoxFocusLabel.Name = "editorBoxFocusLabel";
 			this.editorBoxFocusLabel.Size = new System.Drawing.Size(0, 13);
 			this.editorBoxFocusLabel.TabIndex = 4;
@@ -173,7 +201,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.splitContainer.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
 			this.splitContainer.IsSplitterFixed = true;
-			this.splitContainer.Location = new System.Drawing.Point(190, 43);
+			this.splitContainer.Location = new System.Drawing.Point(211, 42);
 			this.splitContainer.Name = "splitContainer";
 			// 
 			// splitContainer.Panel1
@@ -189,8 +217,9 @@
 			this.splitContainer.Panel2.AutoScroll = true;
 			this.splitContainer.Panel2.Controls.Add(this.mainEditorBox);
 			this.splitContainer.Panel2.Font = new System.Drawing.Font("Cascadia Code", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.splitContainer.Size = new System.Drawing.Size(803, 574);
-			this.splitContainer.SplitterDistance = 42;
+			this.splitContainer.Panel2.ForeColor = System.Drawing.Color.White;
+			this.splitContainer.Size = new System.Drawing.Size(781, 573);
+			this.splitContainer.SplitterDistance = 35;
 			this.splitContainer.TabIndex = 5;
 			// 
 			// numberLineLable
@@ -210,16 +239,74 @@
 			this.lineNumberBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(16)))), ((int)(((byte)(25)))), ((int)(((byte)(51)))));
 			this.lineNumberBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			this.lineNumberBox.ForeColor = System.Drawing.Color.Gray;
-			this.lineNumberBox.Location = new System.Drawing.Point(0, 0);
+			this.lineNumberBox.Location = new System.Drawing.Point(-2, 0);
 			this.lineNumberBox.Name = "lineNumberBox";
 			this.lineNumberBox.ReadOnly = true;
 			this.lineNumberBox.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
 			this.lineNumberBox.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
-			this.lineNumberBox.Size = new System.Drawing.Size(42, 574);
+			this.lineNumberBox.Size = new System.Drawing.Size(34, 573);
 			this.lineNumberBox.TabIndex = 6;
-			this.lineNumberBox.Text = "1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n" +
-    "31\n32\n33";
+			this.lineNumberBox.Text = "1";
 			this.lineNumberBox.WordWrap = false;
+			// 
+			// documentTreeSplitter
+			// 
+			this.documentTreeSplitter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+			this.documentTreeSplitter.Location = new System.Drawing.Point(0, 35);
+			this.documentTreeSplitter.Name = "documentTreeSplitter";
+			this.documentTreeSplitter.Orientation = System.Windows.Forms.Orientation.Horizontal;
+			// 
+			// documentTreeSplitter.Panel1
+			// 
+			this.documentTreeSplitter.Panel1.Controls.Add(this.treeView);
+			// 
+			// documentTreeSplitter.Panel2
+			// 
+			this.documentTreeSplitter.Panel2.Controls.Add(this.listView);
+			this.documentTreeSplitter.Size = new System.Drawing.Size(209, 589);
+			this.documentTreeSplitter.SplitterDistance = 100;
+			this.documentTreeSplitter.TabIndex = 6;
+			// 
+			// listView
+			// 
+			this.listView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.listView.AutoArrange = false;
+			this.listView.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(6)))), ((int)(((byte)(13)))), ((int)(((byte)(33)))));
+			this.listView.BorderStyle = System.Windows.Forms.BorderStyle.None;
+			this.listView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.name,
+            this.type});
+			this.listView.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.listView.ForeColor = System.Drawing.Color.Gainsboro;
+			this.listView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
+			this.listView.HideSelection = false;
+			this.listView.ImeMode = System.Windows.Forms.ImeMode.Off;
+			this.listView.LabelWrap = false;
+			this.listView.Location = new System.Drawing.Point(0, 2);
+			this.listView.Name = "listView";
+			this.listView.Size = new System.Drawing.Size(209, 483);
+			this.listView.SmallImageList = this.imageList;
+			this.listView.TabIndex = 0;
+			this.listView.UseCompatibleStateImageBehavior = false;
+			this.listView.View = System.Windows.Forms.View.List;
+			this.listView.ItemActivate += new System.EventHandler(this.ListView_ItemChosen);
+			// 
+			// name
+			// 
+			this.name.Text = "Name";
+			this.name.Width = 150;
+			// 
+			// type
+			// 
+			this.type.Text = "Type";
+			this.type.Width = 59;
+			// 
+			// openFileDialog
+			// 
+			this.openFileDialog.FileName = "openFileDialog";
 			// 
 			// Breeze
 			// 
@@ -229,11 +316,13 @@
 			this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(16)))), ((int)(((byte)(25)))), ((int)(((byte)(51)))));
 			this.ClientSize = new System.Drawing.Size(1000, 624);
 			this.ControlBox = false;
+			this.Controls.Add(this.documentTreeSplitter);
 			this.Controls.Add(this.splitContainer);
 			this.Controls.Add(this.editorBoxFocusLabel);
-			this.Controls.Add(this.treeView1);
 			this.Controls.Add(this.TitleBar);
+			this.DoubleBuffered = true;
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+			this.ImeMode = System.Windows.Forms.ImeMode.Off;
 			this.Name = "Breeze";
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -245,6 +334,10 @@
 			this.splitContainer.Panel2.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.splitContainer)).EndInit();
 			this.splitContainer.ResumeLayout(false);
+			this.documentTreeSplitter.Panel1.ResumeLayout(false);
+			this.documentTreeSplitter.Panel2.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)(this.documentTreeSplitter)).EndInit();
+			this.documentTreeSplitter.ResumeLayout(false);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -255,7 +348,7 @@
 		    private System.Windows.Forms.Panel expandButton;
 		    private System.Windows.Forms.Panel exitButton;
 		    private System.Windows.Forms.Panel minimiseButton;
-		private System.Windows.Forms.TreeView treeView1;
+		private System.Windows.Forms.TreeView treeView;
 		private System.Windows.Forms.RichTextBox mainEditorBox;
 		private System.Windows.Forms.Label editorBoxFocusLabel;
 		private System.Windows.Forms.SplitContainer splitContainer;
@@ -263,6 +356,12 @@
 		private System.Windows.Forms.PictureBox pictureBox1;
 		private System.Windows.Forms.Label titleLabel;
 		private System.Windows.Forms.RichTextBox lineNumberBox;
+		private System.Windows.Forms.SplitContainer documentTreeSplitter;
+		private System.Windows.Forms.ImageList imageList;
+		private System.Windows.Forms.ListView listView;
+		private System.Windows.Forms.ColumnHeader name;
+		private System.Windows.Forms.ColumnHeader type;
+		private System.Windows.Forms.OpenFileDialog openFileDialog;
 	}
 }
 
