@@ -39,6 +39,7 @@
 			this.numberLineLable = new System.Windows.Forms.Label();
 			this.lineNumberBox = new System.Windows.Forms.RichTextBox();
 			this.documentTreeSplitter = new System.Windows.Forms.SplitContainer();
+			this.label1 = new System.Windows.Forms.Label();
 			this.listView = new System.Windows.Forms.ListView();
 			this.name = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.type = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -259,6 +260,7 @@
 			// 
 			// documentTreeSplitter.Panel1
 			// 
+			this.documentTreeSplitter.Panel1.Controls.Add(this.label1);
 			this.documentTreeSplitter.Panel1.Controls.Add(this.treeView);
 			// 
 			// documentTreeSplitter.Panel2
@@ -267,6 +269,16 @@
 			this.documentTreeSplitter.Size = new System.Drawing.Size(209, 589);
 			this.documentTreeSplitter.SplitterDistance = 100;
 			this.documentTreeSplitter.TabIndex = 6;
+			// 
+			// label1
+			// 
+			this.label1.AutoSize = true;
+			this.label1.ForeColor = System.Drawing.Color.Silver;
+			this.label1.Location = new System.Drawing.Point(3, 3);
+			this.label1.Name = "label1";
+			this.label1.Size = new System.Drawing.Size(62, 13);
+			this.label1.TabIndex = 3;
+			this.label1.Text = "Open folder";
 			// 
 			// listView
 			// 
@@ -304,10 +316,6 @@
 			this.type.Text = "Type";
 			this.type.Width = 59;
 			// 
-			// openFileDialog
-			// 
-			this.openFileDialog.FileName = "openFileDialog";
-			// 
 			// Breeze
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -335,6 +343,7 @@
 			((System.ComponentModel.ISupportInitialize)(this.splitContainer)).EndInit();
 			this.splitContainer.ResumeLayout(false);
 			this.documentTreeSplitter.Panel1.ResumeLayout(false);
+			this.documentTreeSplitter.Panel1.PerformLayout();
 			this.documentTreeSplitter.Panel2.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.documentTreeSplitter)).EndInit();
 			this.documentTreeSplitter.ResumeLayout(false);
@@ -362,6 +371,7 @@
 		private System.Windows.Forms.ColumnHeader name;
 		private System.Windows.Forms.ColumnHeader type;
 		private System.Windows.Forms.OpenFileDialog openFileDialog;
+		private System.Windows.Forms.Label label1;
 	}
 }
 

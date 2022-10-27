@@ -22,12 +22,16 @@ namespace Breeze
 {
 	public partial class Breeze : Form
 	{
+		SyntaxManager syntaxManager = new SyntaxManager();
+	
 		public Breeze()
 		{
 			InitializeComponent();
+
 			this.SetStyle(ControlStyles.ResizeRedraw, true);
 
 			ChangeTabsWidth(2);
+
 			PopulateTreeView("C:\\development");
 
 			//Focus on our editor box on start
@@ -201,91 +205,19 @@ namespace Breeze
 		#endregion
 
 		#region Syntax Highlighting
-		Color initialCharacterColour = Color.FromArgb(235, 235, 235);
-
-		//Expression patterns
-		string keywords = @"\b(public|private|partial|static|void|class|namespace|interface|enum|using|foreach|in|if|else|do|while|internal|get|set|return)\b";
-
-		string variables = @"\b(var|const|int|string|long|bool|float|char|this|null|false|true|value|new)\b";
-
-		string referenceTypes = @"\b(Dictionary|List|Vector2|Vector3|StringBuilder|Vector2Int|GameObject|Bounds)\b";
-
-		string comments = @"(/\*[^*]*\*+(?:[^/*][^*]*\*+)*/|\/\/.+?$)";
-
-		string types = @"\b(Console)\b";
-
-		string strings = "\".+?\"";
-
 		private void MainEditorBox_TextChanged(object sender, EventArgs e)
 		{
-			mainEditorBox.ForeColor = Color.White;
+			UpdateLineLength();
 
-			//Character collections
-			MatchCollection keywordMatches = Regex.Matches(mainEditorBox.Text, keywords);
-			MatchCollection variableMatches = Regex.Matches(mainEditorBox.Text, variables);
-			MatchCollection referenceTypesMatches = Regex.Matches(mainEditorBox.Text, referenceTypes);
-			MatchCollection stringsMatches = Regex.Matches(mainEditorBox.Text, strings);
-			MatchCollection commentMatches = Regex.Matches(mainEditorBox.Text, comments, RegexOptions.Multiline);
-			MatchCollection typeMatches = Regex.Matches(mainEditorBox.Text, types);
-
-			//Inital properties
-			int initialIndex = mainEditorBox.SelectionStart;
-			int initalLength = mainEditorBox.SelectionLength;
-
-			//Blinking workaround, focus label
+			//Blinking workaround
 			editorBoxFocusLabel.Focus();
 
-			//Set editor box properties
-			mainEditorBox.SelectionStart = 0;
-			mainEditorBox.SelectionLength = mainEditorBox.Text.Length;
-
-			//Scanning characters
-			foreach (Match match in keywordMatches) {
-				mainEditorBox.SelectionStart = match.Index;
-				mainEditorBox.SelectionLength = match.Length;
-				mainEditorBox.SelectionColor = Color.Cyan;
-			}
-
-			foreach (Match match in variableMatches) {
-				mainEditorBox.SelectionStart = match.Index;
-				mainEditorBox.SelectionLength = match.Length;
-				mainEditorBox.SelectionColor = Color.LightCoral;
-			}
-
-			foreach (Match match in referenceTypesMatches) {
-				mainEditorBox.SelectionStart = match.Index;
-				mainEditorBox.SelectionLength = match.Length;
-				mainEditorBox.SelectionColor = Color.LightCoral;
-			}
-
-			foreach (Match match in commentMatches) {
-				mainEditorBox.SelectionStart = match.Index;
-				mainEditorBox.SelectionLength = match.Length;
-				mainEditorBox.SelectionColor = Color.Green;
-			}
-
-			foreach (Match match in typeMatches) {
-				mainEditorBox.SelectionStart = match.Index;
-				mainEditorBox.SelectionLength = match.Length;
-				mainEditorBox.SelectionColor = Color.Brown;
-			}
-
-			foreach (Match match in stringsMatches) {
-				mainEditorBox.SelectionStart = match.Index;
-				mainEditorBox.SelectionLength = match.Length;
-				mainEditorBox.SelectionColor = Color.Green;
-			}
-
-			mainEditorBox.SelectionStart = initialIndex;
-			mainEditorBox.SelectionLength = initalLength;
-			mainEditorBox.SelectionColor = initialCharacterColour;
+			syntaxManager.HighlightSyntax(mainEditorBox);
 
 			//Refocus editorbox
 			mainEditorBox.Focus();
-
-			UpdateLineLength();
 		}
-		#endregion
+			#endregion
 
 		#region Line count
 		StringBuilder lineCountBuilder = new StringBuilder(100);
