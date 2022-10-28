@@ -39,11 +39,17 @@
 			this.numberLineLable = new System.Windows.Forms.Label();
 			this.lineNumberBox = new System.Windows.Forms.RichTextBox();
 			this.documentTreeSplitter = new System.Windows.Forms.SplitContainer();
-			this.label1 = new System.Windows.Forms.Label();
+			this.openFolderLabel = new System.Windows.Forms.Label();
 			this.listView = new System.Windows.Forms.ListView();
 			this.name = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.type = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
+			this.contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+			this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.saveToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+			this.saveToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
+			this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.currentFileLabel = new System.Windows.Forms.Label();
+			this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.TitleBar.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
@@ -54,6 +60,7 @@
 			this.documentTreeSplitter.Panel1.SuspendLayout();
 			this.documentTreeSplitter.Panel2.SuspendLayout();
 			this.documentTreeSplitter.SuspendLayout();
+			this.contextMenu.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// TitleBar
@@ -61,14 +68,15 @@
 			this.TitleBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.TitleBar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(37)))), ((int)(((byte)(65)))));
+			this.TitleBar.Controls.Add(this.currentFileLabel);
 			this.TitleBar.Controls.Add(this.titleLabel);
 			this.TitleBar.Controls.Add(this.minimiseButton);
 			this.TitleBar.Controls.Add(this.expandButton);
 			this.TitleBar.Controls.Add(this.exitButton);
 			this.TitleBar.Controls.Add(this.pictureBox1);
-			this.TitleBar.Location = new System.Drawing.Point(0, 0);
+			this.TitleBar.Location = new System.Drawing.Point(4, 4);
 			this.TitleBar.Name = "TitleBar";
-			this.TitleBar.Size = new System.Drawing.Size(1000, 35);
+			this.TitleBar.Size = new System.Drawing.Size(992, 35);
 			this.TitleBar.TabIndex = 1;
 			this.TitleBar.MouseDown += new System.Windows.Forms.MouseEventHandler(this.TitleBar_MouseDown);
 			this.TitleBar.MouseMove += new System.Windows.Forms.MouseEventHandler(this.TitleBar_MouseMove);
@@ -79,7 +87,7 @@
 			this.titleLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.titleLabel.AutoSize = true;
 			this.titleLabel.Font = new System.Drawing.Font("rainyhearts", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.titleLabel.ForeColor = System.Drawing.Color.WhiteSmoke;
+			this.titleLabel.ForeColor = System.Drawing.Color.GhostWhite;
 			this.titleLabel.Location = new System.Drawing.Point(63, 9);
 			this.titleLabel.Name = "titleLabel";
 			this.titleLabel.Size = new System.Drawing.Size(63, 18);
@@ -93,7 +101,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.minimiseButton.BackgroundImage = global::Breeze.Properties.Resources.minimiseIcon;
 			this.minimiseButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-			this.minimiseButton.Location = new System.Drawing.Point(865, 0);
+			this.minimiseButton.Location = new System.Drawing.Point(858, 0);
 			this.minimiseButton.Name = "minimiseButton";
 			this.minimiseButton.Size = new System.Drawing.Size(45, 35);
 			this.minimiseButton.TabIndex = 4;
@@ -109,7 +117,7 @@
 			this.expandButton.BackgroundImage = global::Breeze.Properties.Resources.expandIcon;
 			this.expandButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
 			this.expandButton.ForeColor = System.Drawing.Color.White;
-			this.expandButton.Location = new System.Drawing.Point(909, 0);
+			this.expandButton.Location = new System.Drawing.Point(902, 0);
 			this.expandButton.Name = "expandButton";
 			this.expandButton.Size = new System.Drawing.Size(46, 35);
 			this.expandButton.TabIndex = 3;
@@ -123,7 +131,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.exitButton.BackgroundImage = global::Breeze.Properties.Resources.exitIcon;
 			this.exitButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-			this.exitButton.Location = new System.Drawing.Point(955, 0);
+			this.exitButton.Location = new System.Drawing.Point(947, 0);
 			this.exitButton.Name = "exitButton";
 			this.exitButton.Size = new System.Drawing.Size(45, 35);
 			this.exitButton.TabIndex = 2;
@@ -156,7 +164,7 @@
 			this.treeView.Location = new System.Drawing.Point(0, 0);
 			this.treeView.Name = "treeView";
 			this.treeView.SelectedImageIndex = 0;
-			this.treeView.Size = new System.Drawing.Size(209, 100);
+			this.treeView.Size = new System.Drawing.Size(205, 97);
 			this.treeView.StateImageList = this.imageList;
 			this.treeView.TabIndex = 2;
 			this.treeView.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.TreeView_NodeMouseClick);
@@ -180,12 +188,13 @@
 			this.mainEditorBox.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(235)))), ((int)(((byte)(235)))), ((int)(((byte)(235)))));
 			this.mainEditorBox.Location = new System.Drawing.Point(-1, -1);
 			this.mainEditorBox.Name = "mainEditorBox";
-			this.mainEditorBox.Size = new System.Drawing.Size(743, 574);
+			this.mainEditorBox.Size = new System.Drawing.Size(747, 577);
 			this.mainEditorBox.TabIndex = 3;
 			this.mainEditorBox.Text = "";
 			this.mainEditorBox.WordWrap = false;
 			this.mainEditorBox.VScroll += new System.EventHandler(this.MainEditor_VerticalChanged);
 			this.mainEditorBox.TextChanged += new System.EventHandler(this.MainEditorBox_TextChanged);
+			this.mainEditorBox.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Editor_RightDown);
 			// 
 			// editorBoxFocusLabel
 			// 
@@ -245,7 +254,7 @@
 			this.lineNumberBox.ReadOnly = true;
 			this.lineNumberBox.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
 			this.lineNumberBox.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
-			this.lineNumberBox.Size = new System.Drawing.Size(34, 573);
+			this.lineNumberBox.Size = new System.Drawing.Size(34, 576);
 			this.lineNumberBox.TabIndex = 6;
 			this.lineNumberBox.Text = "1";
 			this.lineNumberBox.WordWrap = false;
@@ -254,31 +263,32 @@
 			// 
 			this.documentTreeSplitter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
-			this.documentTreeSplitter.Location = new System.Drawing.Point(0, 35);
+			this.documentTreeSplitter.Location = new System.Drawing.Point(4, 39);
 			this.documentTreeSplitter.Name = "documentTreeSplitter";
 			this.documentTreeSplitter.Orientation = System.Windows.Forms.Orientation.Horizontal;
 			// 
 			// documentTreeSplitter.Panel1
 			// 
-			this.documentTreeSplitter.Panel1.Controls.Add(this.label1);
+			this.documentTreeSplitter.Panel1.Controls.Add(this.openFolderLabel);
 			this.documentTreeSplitter.Panel1.Controls.Add(this.treeView);
 			// 
 			// documentTreeSplitter.Panel2
 			// 
 			this.documentTreeSplitter.Panel2.Controls.Add(this.listView);
-			this.documentTreeSplitter.Size = new System.Drawing.Size(209, 589);
-			this.documentTreeSplitter.SplitterDistance = 100;
+			this.documentTreeSplitter.Size = new System.Drawing.Size(205, 581);
+			this.documentTreeSplitter.SplitterDistance = 97;
 			this.documentTreeSplitter.TabIndex = 6;
 			// 
-			// label1
+			// openFolderLabel
 			// 
-			this.label1.AutoSize = true;
-			this.label1.ForeColor = System.Drawing.Color.Silver;
-			this.label1.Location = new System.Drawing.Point(3, 3);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(62, 13);
-			this.label1.TabIndex = 3;
-			this.label1.Text = "Open folder";
+			this.openFolderLabel.AutoSize = true;
+			this.openFolderLabel.ForeColor = System.Drawing.Color.GhostWhite;
+			this.openFolderLabel.Location = new System.Drawing.Point(17, 15);
+			this.openFolderLabel.Name = "openFolderLabel";
+			this.openFolderLabel.Size = new System.Drawing.Size(62, 13);
+			this.openFolderLabel.TabIndex = 3;
+			this.openFolderLabel.Text = "Open folder";
+			this.openFolderLabel.Click += new System.EventHandler(this.OpenFolderLabel_Click);
 			// 
 			// listView
 			// 
@@ -299,7 +309,7 @@
 			this.listView.LabelWrap = false;
 			this.listView.Location = new System.Drawing.Point(0, 2);
 			this.listView.Name = "listView";
-			this.listView.Size = new System.Drawing.Size(209, 483);
+			this.listView.Size = new System.Drawing.Size(205, 478);
 			this.listView.SmallImageList = this.imageList;
 			this.listView.TabIndex = 0;
 			this.listView.UseCompatibleStateImageBehavior = false;
@@ -315,6 +325,62 @@
 			// 
 			this.type.Text = "Type";
 			this.type.Width = 59;
+			// 
+			// contextMenu
+			// 
+			this.contextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.fileToolStripMenuItem,
+            this.saveToolStripMenuItem,
+            this.closeToolStripMenuItem});
+			this.contextMenu.Name = "contextMenu";
+			this.contextMenu.Size = new System.Drawing.Size(181, 92);
+			// 
+			// fileToolStripMenuItem
+			// 
+			this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.saveToolStripMenuItem2,
+            this.saveToolStripMenuItem1});
+			this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
+			this.fileToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.fileToolStripMenuItem.Text = "File";
+			// 
+			// saveToolStripMenuItem1
+			// 
+			this.saveToolStripMenuItem1.Name = "saveToolStripMenuItem1";
+			this.saveToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+			this.saveToolStripMenuItem1.Text = "Open File";
+			// 
+			// saveToolStripMenuItem2
+			// 
+			this.saveToolStripMenuItem2.Name = "saveToolStripMenuItem2";
+			this.saveToolStripMenuItem2.Size = new System.Drawing.Size(180, 22);
+			this.saveToolStripMenuItem2.Text = "Open Folder";
+			this.saveToolStripMenuItem2.Click += new System.EventHandler(this.ContextMenu_FolderClick);
+			// 
+			// saveToolStripMenuItem
+			// 
+			this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
+			this.saveToolStripMenuItem.Size = new System.Drawing.Size(98, 22);
+			this.saveToolStripMenuItem.Text = "Save";
+			// 
+			// currentFileLabel
+			// 
+			this.currentFileLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
+			this.currentFileLabel.AutoSize = true;
+			this.currentFileLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.currentFileLabel.ForeColor = System.Drawing.Color.Gray;
+			this.currentFileLabel.Location = new System.Drawing.Point(166, 12);
+			this.currentFileLabel.Name = "currentFileLabel";
+			this.currentFileLabel.Size = new System.Drawing.Size(45, 13);
+			this.currentFileLabel.TabIndex = 6;
+			this.currentFileLabel.Text = "Editing: ";
+			this.currentFileLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			// 
+			// closeToolStripMenuItem
+			// 
+			this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
+			this.closeToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
+			this.closeToolStripMenuItem.Text = "Close";
 			// 
 			// Breeze
 			// 
@@ -347,6 +413,7 @@
 			this.documentTreeSplitter.Panel2.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.documentTreeSplitter)).EndInit();
 			this.documentTreeSplitter.ResumeLayout(false);
+			this.contextMenu.ResumeLayout(false);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -370,8 +437,14 @@
 		private System.Windows.Forms.ListView listView;
 		private System.Windows.Forms.ColumnHeader name;
 		private System.Windows.Forms.ColumnHeader type;
-		private System.Windows.Forms.OpenFileDialog openFileDialog;
-		private System.Windows.Forms.Label label1;
+		private System.Windows.Forms.Label openFolderLabel;
+		private System.Windows.Forms.ContextMenuStrip contextMenu;
+		private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem1;
+		private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem2;
+		private System.Windows.Forms.Label currentFileLabel;
+		private System.Windows.Forms.ToolStripMenuItem closeToolStripMenuItem;
 	}
 }
 

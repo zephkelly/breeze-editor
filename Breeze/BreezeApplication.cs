@@ -32,10 +32,12 @@ namespace Breeze
 
 			ChangeTabsWidth(2);
 
-			PopulateTreeView("C:\\development");
-
 			//Focus on our editor box on start
 			this.ActiveControl = mainEditorBox;
+
+			//Current file label
+			currentFileLabel.Hide();
+			currentFileLabel.Enabled = false;
 		}
 
 		#region Resizable Form
@@ -46,23 +48,55 @@ namespace Breeze
 			{
 				Point cursorPoint = new Point(m.LParam.ToInt32());
 				cursorPoint = this.PointToClient(cursorPoint);
+
+				//Top right corner
+				if (cursorPoint.Y <= gripSize && cursorPoint.X >= this.ClientSize.Width - gripSize)
+				{
+					m.Result = (IntPtr)14;
+					return;
+				}
+				//Top left corner
+				if (cursorPoint.Y <= gripSize && cursorPoint.X <= gripSize)
+				{
+					m.Result = (IntPtr)13;
+					return;
+				}
+				//Bottom right corner
+				if (cursorPoint.Y >= this.ClientSize.Height - gripSize && cursorPoint.X >= this.ClientSize.Width - gripSize)
+				{
+					m.Result = (IntPtr)17;
+					return;
+				}
+				//Bottom left corner
+				if (cursorPoint.Y >= this.ClientSize.Height - gripSize && cursorPoint.X <= gripSize)
+				{
+					m.Result = (IntPtr)16;
+					return;
+				}
+
 				//Pointer bottom resizeable
-				if (cursorPoint.Y >= this.ClientSize.Height - gripSize && cursorPoint.X <= this.ClientSize.Width - gripSize)
+				if (cursorPoint.Y >= this.ClientSize.Height - gripSize)
 				{
 					m.Result = (IntPtr)15;
 					return;
 				}
+				//Pointer top resizeable
+				else if (cursorPoint.Y <= gripSize)
+				{
+					m.Result = (IntPtr)12;
+					return;
+				}
+
 				//Pointer right resizable
-				if (cursorPoint.X >= this.ClientSize.Width - gripSize && cursorPoint.Y <= this.ClientSize.Height - gripSize)
+				if (cursorPoint.X >= this.ClientSize.Width - gripSize)
 				{
 					m.Result = (IntPtr)11;
 					return;
 				}
-
-				//Pointer resize bottom right corner
-				if (cursorPoint.X >= this.ClientSize.Width - gripSize && cursorPoint.Y >= this.ClientSize.Height - gripSize)
+				//Pointer left resizable
+				if (cursorPoint.X <= gripSize)
 				{
-					m.Result = (IntPtr)17;
+					m.Result = (IntPtr)10;
 					return;
 				}
 
@@ -169,6 +203,11 @@ namespace Breeze
 				unexpandedFormSize.Y = this.Height;
 
 				this.TopMost = true;
+
+				var clientScreen = Screen.FromControl(this).Bounds;
+				this.Width = clientScreen.Width;
+				this.Height = clientScreen.Height;
+
 				this.WindowState = FormWindowState.Maximized;
 			}
 
@@ -391,6 +430,10 @@ namespace Breeze
 			string itemPath = Path.GetFullPath(currentlyActiveFile.Name).ToString();
 
 			mainEditorBox.Text = System.IO.File.ReadAllText(itemPath);
+
+			currentFileLabel.Text = $"Editing:  {Path.GetFileName(itemPath)}";
+			currentFileLabel.Enabled = true;
+			currentFileLabel.Show();
 		}
 
 		private ListViewItem GetItemFromPoint(ListView listView, Point mousePosition)
@@ -415,6 +458,46 @@ namespace Breeze
 		}
 
 		//Add a file->save
+		#endregion
+
+		#region Open folder treeview
+		private void OpenFolderLabel_Click(object sender, EventArgs e)
+		{
+			FolderBrowserDialog folderBrowser = new FolderBrowserDialog();
+
+			if (folderBrowser.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+			{
+				PopulateTreeView(folderBrowser.SelectedPath);
+				this.openFolderLabel.Enabled = false;
+				this.openFolderLabel.Hide();
+			}
+		}
+		#endregion
+
+		#region Context menu
+		private void Editor_RightDown(object sender, MouseEventArgs e)
+		{
+			if (e.Button == System.Windows.Forms.MouseButtons.Right)
+			{
+				this.contextMenu.Show(Cursor.Position);
+			}
+		}
+
+		private void ContextMenu_FolderClick(object sender, EventArgs e)
+		{
+			FolderBrowserDialog folderBrowser = new FolderBrowserDialog();
+
+			if (folderBrowser.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+			{
+				PopulateTreeView(folderBrowser.SelectedPath);
+
+				if (openFolderLabel.Enabled)
+				{
+					this.openFolderLabel.Hide();
+					this.openFolderLabel.Enabled = false;
+				}
+			}
+		}
 		#endregion
 	}
 }   
